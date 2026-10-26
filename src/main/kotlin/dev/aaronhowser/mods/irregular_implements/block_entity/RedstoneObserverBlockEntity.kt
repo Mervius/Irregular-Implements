@@ -139,7 +139,11 @@ class RedstoneObserverBlockEntity(
 		private fun linkBlock(level: Level, observerPos: BlockPos, targetPos: BlockPos) {
 			linkedPositions
 				.getOrPut(LevelPos(level, targetPos)) { mutableListOf() }
-				.add(observerPos)
+				.let { observers ->
+					if (observerPos !in observers) {
+						observers.add(observerPos)
+					}
+				}
 		}
 
 		@JvmStatic
@@ -158,7 +162,7 @@ class RedstoneObserverBlockEntity(
 
 			val positions = linkedPositions[levelPos] ?: return
 			for (observerPos in positions) {
-				val stateThere = level.getBlockState(observerPos)
+				val stateThere = level.getBlockState(targetPos)
 				if (stateThere.isBlock(ModBlockTagsProvider.IGNORES_WIRELESS_REDSTONE)) {
 					continue
 				}
