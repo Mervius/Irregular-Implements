@@ -54,7 +54,11 @@ abstract class RedstoneInterfaceBlockEntity(
 		fun linkBlock(level: Level, interfacePos: BlockPos, targetPos: BlockPos) {
 			linkedPositions
 				.getOrPut(GlobalPos(level.dimension(), targetPos)) { mutableListOf() }
-				.add(interfacePos)
+				.let { interfaces ->
+					if (interfacePos !in interfaces) {
+						interfaces.add(interfacePos)
+					}
+				}
 		}
 
 		@JvmStatic
@@ -76,7 +80,7 @@ abstract class RedstoneInterfaceBlockEntity(
 			val interfaces = linkedPositions[globalPos] ?: return -1
 			val filtered = interfaces.filter {
 				level.isLoaded(it)
-						&& !level.getBlockState(it).isBlock(ModBlockTagsProvider.IGNORES_WIRELESS_REDSTONE)
+						&& !level.getBlockState(targetPos).isBlock(ModBlockTagsProvider.IGNORES_WIRELESS_REDSTONE)
 			}
 
 			if (filtered.isEmpty()) return -1
