@@ -503,6 +503,11 @@ class ModBlockTagsProvider(
 				ModBlocks.FERTILIZED_DIRT.get()
 			)
 
+		this.tag(FERTILISED_DIRT_BLACKLIST)
+			.add(
+				ModBlocks.FERTILIZED_DIRT.get()
+			)
+
 	}
 
 	private fun colorTags() {
@@ -558,6 +563,7 @@ class ModBlockTagsProvider(
 		val NATURE_CORE_IMMUNE = modTag("nature_core_immune")
 		val GRASS_SEEDS_COMPATIBLE = modTag("grass_seeds_compatible")
 		val IGNORES_WIRELESS_REDSTONE = modTag("ignores_wireless_redstone")
+		val FERTILISED_DIRT_BLACKLIST = modTag("fertilised_dirt_blacklist")
 	}
 
 }
