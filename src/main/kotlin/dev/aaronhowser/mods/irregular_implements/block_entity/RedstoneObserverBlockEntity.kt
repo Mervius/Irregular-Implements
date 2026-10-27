@@ -156,11 +156,25 @@ class RedstoneObserverBlockEntity(
 			}
 		}
 
+
+		private val updatingObservers = ThreadLocal.withInitial { mutableSetOf<LevelPos>() }
+
 		@JvmStatic
 		fun updateObservers(level: Level, targetPos: BlockPos) {
 			val levelPos = LevelPos(level, targetPos)
 
 			val positions = linkedPositions[levelPos] ?: return
+
+			val updating = updatingObservers.get()
+
+			if (!updating.add(levelPos)) {
+				updating.remove(levelPos)
+				if (updating.isEmpty()) {
+					updatingObservers.remove()
+				}
+				return
+			}
+
 			for (observerPos in positions) {
 				if (level.getBlockState(targetPos).isBlock(ModBlockTagsProvider.IGNORES_WIRELESS_REDSTONE)) {
 					continue
