@@ -79,7 +79,7 @@ class FertilizedDirtBlock : Block(
 		val cropPos = pos.above()
 		val cropState = level.getBlockState(cropPos)
 
-		if (cropState.isRandomlyTicking && !cropState.isBlock(ModBlockTagsProvider.FERTILISED_DIRT_BLACKLIST)) {
+		if (cropState.isRandomlyTicking && !cropState.isBlock(ModBlockTagsProvider.FERTILIZED_DIRT_BLACKLIST)) {
 			repeat(3) {
 				cropState.randomTick(level, cropPos, random)
 			}
