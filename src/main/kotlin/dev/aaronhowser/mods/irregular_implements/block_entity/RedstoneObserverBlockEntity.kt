@@ -139,7 +139,11 @@ class RedstoneObserverBlockEntity(
 		private fun linkBlock(level: Level, observerPos: BlockPos, targetPos: BlockPos) {
 			linkedPositions
 				.getOrPut(LevelPos(level, targetPos)) { mutableListOf() }
-				.add(observerPos)
+				.let { observers ->
+					if (observerPos !in observers) {
+						observers.add(observerPos)
+					}
+				}
 		}
 
 		@JvmStatic
@@ -152,18 +156,33 @@ class RedstoneObserverBlockEntity(
 			}
 		}
 
+		private val updatedPositions = mutableMapOf<Level, Pair<Long, MutableSet<BlockPos>>>()
+
 		@JvmStatic
 		fun updateObservers(level: Level, targetPos: BlockPos) {
-			val levelPos = LevelPos(level, targetPos)
+			if (level.getBlockState(targetPos)
+					.isBlock(ModBlockTagsProvider.IGNORES_WIRELESS_REDSTONE)
+			) return
 
-			val positions = linkedPositions[levelPos] ?: return
-			for (observerPos in positions) {
-				val stateThere = level.getBlockState(observerPos)
-				if (stateThere.isBlock(ModBlockTagsProvider.IGNORES_WIRELESS_REDSTONE)) {
-					continue
+			val positions = linkedPositions[LevelPos(level, targetPos)] ?: return
+			val gameTime = level.gameTime
+
+			val entry = updatedPositions[level]
+			val visited = if (entry == null || entry.first != gameTime) {
+				mutableSetOf<BlockPos>().also {
+					updatedPositions[level] = gameTime to it
 				}
+			} else {
+				entry.second
+			}
 
-				level.updateNeighborsAt(observerPos, level.getBlockState(observerPos).block)
+			if (!visited.add(targetPos)) return
+
+			for (observerPos in positions) {
+				level.updateNeighborsAt(
+					observerPos,
+					level.getBlockState(observerPos).block
+				)
 			}
 		}
 
