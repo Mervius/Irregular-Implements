@@ -24,6 +24,7 @@ class FertilizedDirtBlock : Block(
 	Properties
 		.ofFullCopy(Blocks.FARMLAND)
 		.dynamicShape()
+		.forceSolidOn()
 ) {
 
 	init {
