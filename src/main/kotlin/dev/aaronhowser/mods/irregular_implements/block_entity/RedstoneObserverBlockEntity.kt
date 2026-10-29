@@ -167,7 +167,10 @@ class RedstoneObserverBlockEntity(
 			val positions = linkedPositions[LevelPos(level, targetPos)] ?: return
 			val gameTime = level.gameTime
 
-
+			/**
+			 * If the target block is adjacent to the observer, prevent infinite neighbor update recursion.
+			 * This only stops a single neighbor update that happens after the first. This might not be enough to stop recursion in all cases.
+			 */
 			for (observerPos in positions) {
 				val visited = updatedPositions[LevelPos(level, observerPos)]
 				if (visited == null || visited != gameTime) {
