@@ -2,6 +2,7 @@ package dev.aaronhowser.mods.irregular_implements.block_entity.base
 
 import dev.aaronhowser.mods.aaron.block_entity.SyncingBlockEntity
 import dev.aaronhowser.mods.aaron.misc.AaronExtensions.isBlock
+import dev.aaronhowser.mods.irregular_implements.block.RedstoneInterfaceBlock
 import dev.aaronhowser.mods.irregular_implements.datagen.tag.ModBlockTagsProvider
 import net.minecraft.core.BlockPos
 import net.minecraft.core.GlobalPos
@@ -85,7 +86,7 @@ abstract class RedstoneInterfaceBlockEntity(
 
 			if (filtered.isEmpty()) return -1
 
-			return filtered.maxOf { level.getBestNeighborSignal(it) }
+			return filtered.maxOf { level.getBlockState(it).getValue(RedstoneInterfaceBlock.POWER) }
 		}
 
 		@JvmStatic
