@@ -87,8 +87,8 @@ object ModInfoLang {
 		addInfo(ModBlocks.ADVANCED_ITEM_COLLECTOR, "Collects items in a configurable radius and inserts it into the inventory it's placed on.\n\nYou can also insert an Item Filter for more control.")
 		provider.add(BIOME_BLOCKS, "Changes color to match the biome.")
 		addInfo(ModBlocks.RAINBOW_LAMP, "Changes color depending on the Redstone signal strength.\n\nOnly the texture changes, the light stays the same color.")
-		addInfo(ModBlocks.BASIC_REDSTONE_INTERFACE, "Powers the linked block with the strong Redstone signal it's receiving.\n\nUse a Redstone Tool to link it to a block.")
-		addInfo(ModBlocks.ADVANCED_REDSTONE_INTERFACE, "Powers up to 9 linked blocks with the strong Redstone signal it's receiving.\n\nUse a Redstone Tool to link it to blocks.")
+		addInfo(ModBlocks.BASIC_REDSTONE_INTERFACE, "Powers the linked block with the Redstone signal it's receiving.\n\nUse a Redstone Tool to link it to a block.")
+		addInfo(ModBlocks.ADVANCED_REDSTONE_INTERFACE, "Powers up to 9 linked blocks with the Redstone signal it's receiving.\n\nUse a Redstone Tool to link it to blocks.")
 		addInfo(ModBlocks.SHOCK_ABSORBER, "Reduces all fall damage, and also emits a redstone signal strength relative to the distance fallen.")
 		addInfo(ModBlocks.MOON_PHASE_DETECTOR, "Emits a Redstone signal depending on the current moon phase.")
 
