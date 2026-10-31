@@ -1213,7 +1213,7 @@ object BlocksModonomiconCategory {
 			spotlightPage(ModBlocks.ADVANCED_REDSTONE_INTERFACE.get()) {
 				title = "Advanced Redstone Interface"
 				text = bookText(
-					"The **Advanced Redstone Interface** will transmit its own received strong redstone signal strength to up to 9 linked blocks."
+					"The **Advanced Redstone Interface** will transmit its own received redstone signal strength to up to 9 linked blocks."
 				)
 			}
 
@@ -1267,7 +1267,7 @@ object BlocksModonomiconCategory {
 			spotlightPage(ModBlocks.BASIC_REDSTONE_INTERFACE.get()) {
 				title = "Basic Redstone Interface"
 				text = bookText(
-					"The **Basic Redstone Interface** will transmit its own received strong redstone signal strength to the block it's linked to."
+					"The **Basic Redstone Interface** will transmit its own received redstone signal strength to the block it's linked to."
 				)
 			}
 
@@ -1583,7 +1583,7 @@ object BlocksModonomiconCategory {
 			spotlightPage(ModBlocks.REDSTONE_OBSERVER.get()) {
 				title = "Redstone Observer"
 				text = bookText(
-					"The **Redstone Observer** gives off the same redstone signal output as the block it's linked to if it's a strong signal."
+					"The **Redstone Observer** gives off the same redstone signal output as the block it's linked to. Can read and output weak, strong, and/or analog signals."
 				)
 			}
 

@@ -4,18 +4,22 @@ import dev.aaronhowser.mods.aaron.block_entity.SyncingBlockEntity
 import dev.aaronhowser.mods.aaron.client.AaronClientUtil
 import dev.aaronhowser.mods.aaron.misc.AaronExtensions.isBlock
 import dev.aaronhowser.mods.aaron.misc.AaronExtensions.isTrue
+import dev.aaronhowser.mods.irregular_implements.block.RedstoneObserverBlock
 import dev.aaronhowser.mods.irregular_implements.block_entity.base.RedstoneToolLinkable
 import dev.aaronhowser.mods.irregular_implements.client.render.CubeIndicatorRenderer
 import dev.aaronhowser.mods.irregular_implements.client.render.LineIndicatorRenderer
 import dev.aaronhowser.mods.irregular_implements.datagen.tag.ModBlockTagsProvider
 import dev.aaronhowser.mods.irregular_implements.registry.ModBlockEntityTypes
+import dev.aaronhowser.mods.irregular_implements.registry.ModBlocks
 import dev.aaronhowser.mods.irregular_implements.registry.ModItems
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import org.antlr.v4.runtime.misc.MultiMap
+import kotlin.math.max
 
 class RedstoneObserverBlockEntity(
 	pos: BlockPos,
@@ -142,6 +146,7 @@ class RedstoneObserverBlockEntity(
 				.let { observers ->
 					if (observerPos !in observers) {
 						observers.add(observerPos)
+						updateObservers(level,targetPos)
 					}
 				}
 		}
@@ -156,29 +161,65 @@ class RedstoneObserverBlockEntity(
 			}
 		}
 
-		private val updatedPositions = mutableMapOf<LevelPos, Long>()
-
 		@JvmStatic
 		fun updateObservers(level: Level, targetPos: BlockPos) {
-			if (level.getBlockState(targetPos)
-					.isBlock(ModBlockTagsProvider.IGNORES_WIRELESS_REDSTONE)
-			) return
+			val targetBlock = level.getBlockState(targetPos)
+			if (targetBlock.isBlock(ModBlockTagsProvider.IGNORES_WIRELESS_REDSTONE)) return
 
 			val positions = linkedPositions[LevelPos(level, targetPos)] ?: return
-			val gameTime = level.gameTime
 
-			/**
-			 * If the target block is adjacent to the observer, prevent infinite neighbor update recursion.
-			 * This only stops a single neighbor update that happens after the first. This might not be enough to stop recursion in all cases.
-			 */
 			for (observerPos in positions) {
-				val visited = updatedPositions[LevelPos(level, observerPos)]
-				if (visited == null || visited != gameTime) {
-					updatedPositions[LevelPos(level, observerPos)] = gameTime
-					level.updateNeighborsAt(observerPos, level.getBlockState(observerPos).block)
-				} else {
-					updatedPositions.remove(LevelPos(level,observerPos))
+				println("hi")
+				val observer = level.getBlockState(observerPos)
+				if (observer.isBlock(ModBlocks.REDSTONE_OBSERVER)) {
+					val observerPower = observer.getValue(RedstoneObserverBlock.POWER)
+					val observerDirect = observer.getValue(RedstoneObserverBlock.DIRECT)
+					val observerAnalog = observer.getValue(RedstoneObserverBlock.ANALOG)
+
+					var tempLinkedPower = 0
+					var tempLinkedDirect = 0
+					for (direction in Direction.entries) {
+						tempLinkedPower = max(tempLinkedPower, level.getSignal(targetPos,direction))
+						tempLinkedDirect = max(tempLinkedDirect, level.getDirectSignal(targetPos, direction))
+					}
+					val maxLinkedPower = if (tempLinkedPower >= 15) 15 else tempLinkedPower
+					val maxLinkedDirect = if (tempLinkedDirect >= 15) 15 else tempLinkedDirect
+					val linkedAnalog = targetBlock.getAnalogOutputSignal(level,targetPos)
+
+					val powerChanged = observerPower != maxLinkedPower
+					val directChanged = observerDirect != maxLinkedDirect
+					val analogChanged = observerAnalog != linkedAnalog
+					var newObserver = observer
+					if (powerChanged) {
+						newObserver = newObserver.setValue(RedstoneObserverBlock.POWER, maxLinkedPower)
+					}
+					if (directChanged) {
+						newObserver = newObserver.setValue(RedstoneObserverBlock.DIRECT, maxLinkedDirect)
+					}
+					if (analogChanged) {
+						newObserver = newObserver.setValue(RedstoneObserverBlock.ANALOG, linkedAnalog)
+					}
+
+					if (powerChanged || directChanged || analogChanged) {
+						level.setBlock(observerPos, newObserver, 3)
+						updateNeighborPower(level, observerPos,powerChanged||directChanged, analogChanged)
+					}
 				}
+			}
+		}
+
+		@JvmStatic
+		private fun updateNeighborPower(level: Level, pos: BlockPos, power: Boolean, analog: Boolean) {
+			if (power) {
+				for (direction in Direction.entries) {
+					val neighborPos = pos.relative(direction)
+					level.neighborChanged(neighborPos, ModBlocks.REDSTONE_OBSERVER.get(), pos)
+					level.updateNeighborsAtExceptFromFacing(neighborPos, ModBlocks.REDSTONE_OBSERVER.get(), direction.opposite)
+				}
+			}
+
+			if (analog) {
+				level.updateNeighbourForOutputSignal(pos, ModBlocks.REDSTONE_OBSERVER.get())
 			}
 		}
 

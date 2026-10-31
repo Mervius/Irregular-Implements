@@ -1019,7 +1019,7 @@ object BlocksPatchouliCategory {
 		) {
 			textPage(
 				text = bookText(
-					"The ${major("Advanced Redstone Interface")} will transmit its own received strong redstone signal strength to up to 9 linked blocks.",
+					"The ${major("Advanced Redstone Interface")} will transmit its own received redstone signal strength to up to 9 linked blocks.",
 					"Insert ${internalLink(ItemsPatchouliCategory.locationFilter, "Location Filters")} to link it to those blocks."
 				)
 			)
@@ -1063,7 +1063,7 @@ object BlocksPatchouliCategory {
 		) {
 			textPage(
 				text = bookText(
-					"The ${major("Basic Redstone Interface")} will transmit its own received redstone strong signal strength to the block it's linked to.",
+					"The ${major("Basic Redstone Interface")} will transmit its own received redstone signal strength to the block it's linked to.",
 					"Use a ${internalLink(ItemsPatchouliCategory.redstoneTool, "Redstone Tool")} to link it to a block."
 				)
 			)
@@ -1332,7 +1332,7 @@ object BlocksPatchouliCategory {
 		) {
 			textPage(
 				text = bookText(
-					"The ${major("Redstone Observer")} gives off the same redstone signal output as the block it's linked to if it's a strong signal.",
+					"The ${major("Redstone Observer")} gives off the same redstone signal output as the block it's linked to. Can read and output weak, strong, and/or analog signals.",
 					"Use a ${internalLink(ItemsPatchouliCategory.redstoneTool, "Redstone Tool")} to link it to a block."
 				)
 			)
